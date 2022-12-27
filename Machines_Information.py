@@ -4,7 +4,6 @@ import gspread, subprocess, datetime, urllib.request, socket, string, psutil, os
 from oauth2client.service_account import ServiceAccountCredentials
 from ctypes import windll
 from xml.etree import ElementTree as ET
-import elasticsearch
 
 proxy = 'http://administrator:tp1tp1tp1@139.16.51.63:8080'
 os.environ['http_proxy'] = proxy
