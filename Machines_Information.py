@@ -1,6 +1,6 @@
 #https://www.youtube.com/watch?v=hyUw-koO2DA
 
-import gspread, datetime, urllib.request, socket, string, psutil, os, cx_Oracle,elasticsearch
+import gspread, datetime, urllib.request, socket, string, psutil, os, cx_Oracle
 from oauth2client.service_account import ServiceAccountCredentials
 from ctypes import windll
 
