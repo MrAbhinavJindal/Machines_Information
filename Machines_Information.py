@@ -87,14 +87,14 @@ for cell in sheet.range('B2:B20'):
                 os.chdir('D:/' + dir + '/bin')
                 p = subprocess.Popen("jboss-cli.bat -c deployment-info", stdout=subprocess.PIPE)
                 while p.poll() is None:
-                    text = p.stdout.readline().decode()
-                    if text.startswith('mtv'):
-                        text += "Wildfly Running \n MTV Running"
+                    temp = p.stdout.readline().decode()
+                    if temp.startswith('mtv'):
+                        text += "Wildfly Running \nMTV Running"
                         break
-                    if text.startswith('biweb'):
-                        text += "Wildfly Running \n BIWEB Running"
+                    if temp.startswith('biweb'):
+                        text += "Wildfly Running \nBIWEB Running"
                         break
-                    if text.startswith('Failed'):
+                    if temp.startswith('Failed'):
                         text += 'Wildfly Not running'
                         break
 
