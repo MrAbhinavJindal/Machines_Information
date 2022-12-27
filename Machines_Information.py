@@ -73,7 +73,7 @@ for cell in sheet.range('B2:B20'):
         sheet.update_acell('H' + str(rownum), text)
 
         # -----------JAVA Version ------------
-        JAVA_Version = os.popen("JAVA -version | find \"version\"").read()
+        JAVA_Version = os.popen('java -version 2>&1 | find \"version\"').read()
         text = JAVA_Version
         if text == "":
             text = "JAVA Not Installed"
