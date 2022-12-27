@@ -60,6 +60,7 @@ for cell in sheet.range('B2:B20'):
             sheet.update_acell('D' + str(rownum), text3)
         except:
             pass
+
         # -----------Microstrategy Version ------------
         try:
             MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs | find \"<version>\"").read()
@@ -67,6 +68,14 @@ for cell in sheet.range('B2:B20'):
         except:
             text = "Microstrategy Not Installed"
         sheet.update_acell('H' + str(rownum), text)
+
+        # -----------JAVA Version ------------
+        try:
+            JAVA_Version = os.popen("mstrctl -s IntelligenceServer gs | find \"<version>\"").read()
+            text = JAVA_Version[JAVA_Version.find("<version>") + len("<version>"):JAVA_Version.rfind("</version>")]
+        except:
+            text = "JAVA Not Installed"
+        sheet.update_acell('I' + str(rownum), text)
 
         # -----------Wildfly ------------
         text = '---Wildfly Folders---\n'
@@ -95,10 +104,10 @@ for cell in sheet.range('B2:B20'):
             text += "MTV Running" if MTV == 200 else "MTV Unavailable\n"
             text += "BIWEB Running" if BIWEB == 200 else "BIWEB Unavailable"
 
-        sheet.update_acell('I' + str(rownum), text)
+        sheet.update_acell('J' + str(rownum), text)
 
         # -----------RAM ------------
-        sheet.update_acell('J' + str(rownum), "Total: " + str(psutil.virtual_memory().total/1024000000)[:4] + " GB \n"
+        sheet.update_acell('K' + str(rownum), "Total: " + str(psutil.virtual_memory().total/1024000000)[:4] + " GB \n"
                                               "Used: " + str(psutil.virtual_memory()[3]/1024000000)[:4] + " GB")
 
         # -----------Drive Info ------------
@@ -114,10 +123,10 @@ for cell in sheet.range('B2:B20'):
                 except:
                     pass
             bitmask >>= 1
-        sheet.update_acell('K' + str(rownum), text)
+        sheet.update_acell('L' + str(rownum), text)
 
         # -----------Updated On ------------
-        sheet.update_acell('L' + str(rownum), str(datetime.datetime.now())[:-7])
+        sheet.update_acell('M' + str(rownum), str(datetime.datetime.now())[:-7])
 
 """
 Oracle_Version = subprocess.Popen(["sqlplus", "//"], stdout=subprocess.PIPE, shell=True).communicate()
