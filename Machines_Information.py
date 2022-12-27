@@ -84,27 +84,25 @@ for cell in sheet.range('B2:B20'):
         for dir in os.listdir('D:/'):
             if dir.startswith('wildfly') or dir.startswith('Wildfly'):
                 text += dir + '\n'
+                os.chdir('D:/' + dir + '/bin')
+                p = subprocess.Popen("jboss-cli.bat -c deployment-info", stdout=subprocess.PIPE)
+                while p.poll() is None:
+                    text = p.stdout.readline().decode()
+                    if text.startswith('mtv'):
+                        text += "Wildfly Running \n MTV Running"
+                        break
+                    if text.startswith('biweb'):
+                        text += "Wildfly Running \n BIWEB Running"
+                        break
+                    if text.startswith('Failed'):
+                        text += 'Wildfly Not running'
+                        break
 
         path = str(os.popen("sc qc Wildfly | find \"BINARY_PATH_NAME\"").read())
         if path == "":
             text += "\nWildfly Service Unavailable\n\n"
         else:
             text += "\n---Wildfly Service Path---\n" + path[path.find(": ") + len(": "):path.rfind('')] + "\n\n"
-            try:
-                Wildfly = urllib.request.urlopen("http://localhost:8080").getcode()
-            except:
-                Wildfly = 0
-            try:
-                MTV = urllib.request.urlopen("http://localhost:8080/mtv").getcode()
-            except:
-                MTV = 0
-            try:
-                BIWEB = urllib.request.urlopen("http://localhost:8080/biweb").getcode()
-            except:
-                BIWEB = 0
-            text += "Wildfly Running" if Wildfly == 200 else "Wildfly Unavailable\n"
-            text += "MTV Running" if MTV == 200 else "MTV Unavailable\n"
-            text += "BIWEB Running" if BIWEB == 200 else "BIWEB Unavailable"
 
         sheet.update_acell('J' + str(rownum), text)
 
@@ -144,5 +142,21 @@ for child in MSTR_Version:
 # print(sheet.cell(1, 1).value)
 # print(sheet.row_values(2))
 # sheet.update_acell('A2','zxczxc')
+
+            try:
+                Wildfly = urllib.request.urlopen("http://localhost:8080").getcode()
+            except:
+                Wildfly = 0
+            try:
+                MTV = urllib.request.urlopen("http://localhost:8080/mtv").getcode()
+            except:
+                MTV = 0
+            try:
+                BIWEB = urllib.request.urlopen("http://localhost:8080/biweb").getcode()
+            except:
+                BIWEB = 0
+            text += "Wildfly Running" if Wildfly == 200 else "Wildfly Unavailable\n"
+            text += "MTV Running" if MTV == 200 else "MTV Unavailable\n"
+            text += "BIWEB Running" if BIWEB == 200 else "BIWEB Unavailable"
 """
 
