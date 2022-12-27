@@ -1,5 +1,5 @@
 #https://www.youtube.com/watch?v=hyUw-koO2DA
-from xml.etree import ElementTree as ET 
+
 client_secret = {
   "type": "service_account",
   "project_id": "datauploader-357004",
@@ -61,10 +61,13 @@ for cell in sheet.range('B2:B20'):
         except:
             pass
         # -----------Microstrategy Version ------------
-        MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs").read()
-        MSTR_Version = ET.fromstring(MSTR_Version).find('./application/version').text
-        text = MSTR_Version
-        sheet.update_acell('H' + str(rownum), text) 
+        try:
+            MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs").read()
+            MSTR_Version = ET.fromstring(MSTR_Version).find('./application/version').text
+            text = MSTR_Version
+        except:
+            text = "Microstrategy Not Installed"
+        sheet.update_acell('H' + str(rownum), text)
 
         # -----------Wildfly ------------
         text = '---Wildfly Folders---\n'
