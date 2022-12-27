@@ -27,7 +27,7 @@ sheet = workbook.sheet1
 
 rownum = 1
 for cell in sheet.range('B2:B20'):
-    rownum += 1 
+    rownum += 1
     if cell.value.upper() == socket.gethostname().upper():
         try:
             con = cx_Oracle.connect('system/elcaro')
@@ -89,20 +89,20 @@ for cell in sheet.range('B2:B20'):
                 while p.poll() is None:
                     temp = p.stdout.readline().decode()
                     if temp.startswith('mtv'):
-                        text += "Wildfly Running \nMTV Running"
+                        text += "Wildfly Running \nMTV Running\n\n"
                         break
                     if temp.startswith('biweb'):
-                        text += "Wildfly Running \nBIWEB Running"
+                        text += "Wildfly Running \nBIWEB Running\n\n"
                         break
                     if temp.startswith('Failed'):
-                        text += 'Wildfly Not running'
+                        text += 'Wildfly Not running\n\n'
                         break
 
         path = str(os.popen("sc qc Wildfly | find \"BINARY_PATH_NAME\"").read())
         if path == "":
-            text += "\nWildfly Service Unavailable\n\n"
+            text += "Wildfly Service Unavailable\n\n"
         else:
-            text += "\n---Wildfly Service Path---\n" + path[path.find(": ") + len(": "):path.rfind('')] + "\n\n"
+            text += "---Wildfly Service Path---\n" + path[path.find(": ") + len(": "):path.rfind('')] + "\n\n"
 
         sheet.update_acell('J' + str(rownum), text)
 
