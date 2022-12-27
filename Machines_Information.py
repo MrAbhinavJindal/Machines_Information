@@ -1,15 +1,5 @@
 #https://www.youtube.com/watch?v=hyUw-koO2DA
 
-import gspread, datetime, urllib.request, socket, string, psutil, os, cx_Oracle
-from oauth2client.service_account import ServiceAccountCredentials
-from ctypes import windll
-
-proxy = 'http://administrator:tp1tp1tp1@139.16.51.63:8080'
-os.environ['http_proxy'] = proxy
-os.environ['HTTP_PROXY'] = proxy
-os.environ['https_proxy'] = proxy
-os.environ['HTTPS_PROXY'] = proxy
-
 client_secret = {
   "type": "service_account",
   "project_id": "datauploader-357004",
