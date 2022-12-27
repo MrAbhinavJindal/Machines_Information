@@ -58,10 +58,10 @@ for cell in sheet.range('B2:B20'):
                     text3 += "----" + Oracle_PDB[0] + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
                 except:
                     pass
-            sheet.update_acell('F' + str(rownum), text)
-            sheet.update_acell('G' + str(rownum), text1)
-            sheet.update_acell('C' + str(rownum), text2)
-            sheet.update_acell('D' + str(rownum), text3)
+            sheet.update_acell('F' + str(rownum), text.rstrip("\n\n"))
+            sheet.update_acell('G' + str(rownum), text1.rstrip("\n\n"))
+            sheet.update_acell('C' + str(rownum), text2.rstrip("\n\n"))
+            sheet.update_acell('D' + str(rownum), text3.rstrip("\n\n"))
         except:
             pass
 
@@ -125,7 +125,7 @@ for cell in sheet.range('B2:B20'):
                 except:
                     pass
             bitmask >>= 1
-        sheet.update_acell('L' + str(rownum), text)
+        sheet.update_acell('L' + str(rownum), text.rstrip("\n\n"))
 
         # -----------Updated On ------------
         sheet.update_acell('M' + str(rownum), str(datetime.datetime.now())[:-7])
