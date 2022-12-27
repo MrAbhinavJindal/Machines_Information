@@ -61,12 +61,9 @@ for cell in sheet.range('B2:B20'):
         except:
             pass
         # -----------Microstrategy Version ------------
-        try:
-            MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs").read()
-            MSTR_Version = ET.fromstring(MSTR_Version).find('./application/version').text
-            text = MSTR_Version
-        except:
-            text = "Microstrategy Not Installed"
+        MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs").read()
+        MSTR_Version = ET.fromstring(MSTR_Version).find('./application/version').text
+        text = MSTR_Version
         sheet.update_acell('H' + str(rownum), text)
 
         # -----------Wildfly ------------
