@@ -64,7 +64,7 @@ for cell in sheet.range('B2:B20'):
         MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs").read()
         MSTR_Version = ET.fromstring(MSTR_Version).find('./application/version').text
         text = MSTR_Version
-        sheet.update_acell('H' + str(rownum), text)
+        sheet.update_acell('H' + str(rownum), text) 
 
         # -----------Wildfly ------------
         text = '---Wildfly Folders---\n'
