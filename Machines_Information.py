@@ -27,7 +27,7 @@ sheet = workbook.sheet1
 
 rownum = 1
 for cell in sheet.range('B2:B20'):
-    rownum += 1
+    rownum += 1 
     if cell.value.upper() == socket.gethostname().upper():
         try:
             con = cx_Oracle.connect('system/elcaro')
