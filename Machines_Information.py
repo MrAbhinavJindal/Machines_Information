@@ -1,5 +1,9 @@
 #https://www.youtube.com/watch?v=hyUw-koO2DA
 
+import gspread, datetime, urllib.request, socket, string, psutil, os, cx_Oracle
+from oauth2client.service_account import ServiceAccountCredentials
+from ctypes import windll
+
 client_secret = {
   "type": "service_account",
   "project_id": "datauploader-357004",
@@ -62,18 +66,16 @@ for cell in sheet.range('B2:B20'):
             pass
 
         # -----------Microstrategy Version ------------
-        try:
-            MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs | find \"<version>\"").read()
-            text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")]
-        except:
+        MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs | find \"<version>\"").read()
+        text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")]
+        if text == "":
             text = "Microstrategy Not Installed"
         sheet.update_acell('H' + str(rownum), text)
 
         # -----------JAVA Version ------------
-        try:
-            JAVA_Version = os.popen("mstrctl -s IntelligenceServer gs | find \"<version>\"").read()
-            text = JAVA_Version[JAVA_Version.find("<version>") + len("<version>"):JAVA_Version.rfind("</version>")]
-        except:
+        JAVA_Version = os.popen("JAVA -version | find \"version\"").read()
+        text = JAVA_Version
+        if text == "":
             text = "JAVA Not Installed"
         sheet.update_acell('I' + str(rownum), text)
 
