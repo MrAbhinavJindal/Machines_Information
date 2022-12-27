@@ -62,9 +62,8 @@ for cell in sheet.range('B2:B20'):
             pass
         # -----------Microstrategy Version ------------
         try:
-            MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs").read()
-            MSTR_Version = ET.fromstring(MSTR_Version).find('./application/version').text
-            text = MSTR_Version
+            MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs | find \"<version>\"").read()
+            text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")]
         except:
             text = "Microstrategy Not Installed"
         sheet.update_acell('H' + str(rownum), text)
