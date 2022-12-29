@@ -1,6 +1,6 @@
 #https://www.youtube.com/watch?v=hyUw-koO2DA
 
-import gspread, datetime, socket, string, psutil, os, cx_Oracle
+import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess
 from oauth2client.service_account import ServiceAccountCredentials
 from ctypes import windll
 
@@ -88,6 +88,7 @@ for cell in sheet.range('B2:B20'):
                 p = subprocess.Popen("jboss-cli.bat -c deployment-info", stdout=subprocess.PIPE)
                 while p.poll() is None:
                     temp = p.stdout.readline().decode()
+                    print(temp)
                     if temp.startswith('mtv'):
                         text += "Wildfly Running \nMTV Running\n\n"
                         break
