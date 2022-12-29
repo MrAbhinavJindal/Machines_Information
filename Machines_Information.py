@@ -129,6 +129,7 @@ for cell in sheet.range('B2:B20'):
         # -----------Updated On ------------
         sheet.update_acell('M' + str(rownum), str(datetime.datetime.now())[:-7])
         sys.exit()
+        print(0)
 
 """
 Oracle_Version = subprocess.Popen(["sqlplus", "//"], stdout=subprocess.PIPE, shell=True).communicate()
