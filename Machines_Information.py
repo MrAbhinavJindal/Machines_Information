@@ -1,6 +1,6 @@
 #https://www.youtube.com/watch?v=hyUw-koO2DA
 
-import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess, sys
+import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess
 from oauth2client.service_account import ServiceAccountCredentials
 from ctypes import windll
 
@@ -66,10 +66,13 @@ for cell in sheet.range('B2:B20'):
             pass
 
         # -----------Microstrategy Version ------------
-        MSTR_Version = os.popen("mstrctl -s IntelligenceServer gs | find \"<version>\"").read()
-        text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")]
-        if text == "":
+        p = subprocess.Popen("mstrctl -s IntelligenceServer gs | find \"<version>\"", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        output, error = p.communicate()
+        if output.decode() == "":
             text = "Microstrategy Not Installed"
+        else:
+            MSTR_Version = output.decode()
+            text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")]
         sheet.update_acell('H' + str(rownum), text)
 
         # -----------JAVA Version ------------
@@ -137,20 +140,4 @@ for child in MSTR_Version:
 # print(sheet.cell(1, 1).value)
 # print(sheet.row_values(2))
 # sheet.update_acell('A2','zxczxc')
-
-            try:
-                Wildfly = urllib.request.urlopen("http://localhost:8080").getcode()
-            except:
-                Wildfly = 0
-            try:
-                MTV = urllib.request.urlopen("http://localhost:8080/mtv").getcode()
-            except:
-                MTV = 0
-            try:
-                BIWEB = urllib.request.urlopen("http://localhost:8080/biweb").getcode()
-            except:
-                BIWEB = 0
-            text += "Wildfly Running" if Wildfly == 200 else "Wildfly Unavailable\n"
-            text += "MTV Running" if MTV == 200 else "MTV Unavailable\n"
-            text += "BIWEB Running" if BIWEB == 200 else "BIWEB Unavailable"
 """
