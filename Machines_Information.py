@@ -87,7 +87,7 @@ for cell in sheet.range('B2:B20'):
                 os.chdir('D:/' + dir + '/bin')
                 p = subprocess.Popen("jboss-cli.bat -c deployment-info", stdout=subprocess.PIPE)
                 flag = 0
-                while p.poll() is None or flag < 3:
+                while p.poll() is None and flag < 3:
                     flag += 1
                     temp = p.stdout.readline().decode()
                     print(temp)
