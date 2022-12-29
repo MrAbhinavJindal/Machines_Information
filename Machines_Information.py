@@ -85,21 +85,13 @@ for cell in sheet.range('B2:B20'):
             if dir.startswith('wildfly') or dir.startswith('Wildfly'):
                 text += dir + '\n'
                 os.chdir('D:/' + dir + '/bin')
-                p = subprocess.Popen("jboss-cli.bat -c deployment-info", stdout=subprocess.PIPE)
-                flag = 0
-                while p.poll() is None and flag < 3:
-                    flag += 1
-                    temp = p.stdout.readline().decode()
-                    print(temp)
-                    if temp.startswith('mtv'):
-                        text += "Wildfly Running \nMTV Running\n\n"
-                        break
-                    if temp.startswith('biweb'):
-                        text += "Wildfly Running \nBIWEB Running\n\n"
-                        break
-                    if temp.startswith('Failed'):
-                        text += 'Wildfly Not running\n\n'
-                        break
+                p = subprocess.run("jboss-cli.bat -c deployment-info", stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+                Result1 = p.stdout.splitlines()[0].decode()
+                if Result1.startswith("Failed"):
+                    text += 'Wildfly Not running\n\n'
+                else:
+                    Result2 = p.stdout.splitlines()[1].decode().split()
+                    text += Result2[0] + " - " + Result2[4] + "\n\n"
 
         path = str(os.popen("sc qc Wildfly | find \"BINARY_PATH_NAME\"").read())
         if path == "":
@@ -130,7 +122,6 @@ for cell in sheet.range('B2:B20'):
 
         # -----------Updated On ------------
         sheet.update_acell('M' + str(rownum), str(datetime.datetime.now())[:-7])
-        sys.exit()
 
 """
 Oracle_Version = subprocess.Popen(["sqlplus", "//"], stdout=subprocess.PIPE, shell=True).communicate()
