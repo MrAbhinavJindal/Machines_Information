@@ -1,6 +1,6 @@
 #https://www.youtube.com/watch?v=hyUw-koO2DA
 
-import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess
+import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess, sys
 from oauth2client.service_account import ServiceAccountCredentials
 from ctypes import windll
 
@@ -86,7 +86,9 @@ for cell in sheet.range('B2:B20'):
                 text += dir + '\n'
                 os.chdir('D:/' + dir + '/bin')
                 p = subprocess.Popen("jboss-cli.bat -c deployment-info", stdout=subprocess.PIPE)
-                while p.poll() is None:
+                flag = 0
+                while p.poll() is None or flag>2:
+                    flag += 1
                     temp = p.stdout.readline().decode()
                     print(temp)
                     if temp.startswith('mtv'):
@@ -129,7 +131,6 @@ for cell in sheet.range('B2:B20'):
         # -----------Updated On ------------
         sheet.update_acell('M' + str(rownum), str(datetime.datetime.now())[:-7])
         sys.exit()
-        print(0)
 
 """
 Oracle_Version = subprocess.Popen(["sqlplus", "//"], stdout=subprocess.PIPE, shell=True).communicate()
