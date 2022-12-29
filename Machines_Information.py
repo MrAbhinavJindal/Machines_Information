@@ -160,4 +160,3 @@ for child in MSTR_Version:
             text += "MTV Running" if MTV == 200 else "MTV Unavailable\n"
             text += "BIWEB Running" if BIWEB == 200 else "BIWEB Unavailable"
 """
-
