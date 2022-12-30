@@ -90,7 +90,7 @@ for cell in sheet.range('B2:B20'):
                 os.chdir('D:/' + dir + '/bin')
                 p = subprocess.run("jboss-cli.bat -c deployment-info", stdout=subprocess.PIPE, stdin=subprocess.PIPE)
                 Result1 = p.stdout.splitlines()[0].decode()
-                if Result1.startswith("Failed"):
+                if Result1.startswith("Failed") or Result1.startswith("Press"):
                     text += 'Wildfly Not running\n\n'
                 else:
                     Result2 = p.stdout.splitlines()[1].decode().split()
