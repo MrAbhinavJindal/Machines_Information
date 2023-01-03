@@ -54,12 +54,15 @@ for cell in sheet.range('B2:B20'):
         text2 = ''
         text3 = ''
         Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
+        print("Oracle_CDB - " + Oracle_CDB)
         Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
+        print("Oracle_PDBs - " + Oracle_PDBs)
         if Oracle_PDBs:
             Instances = Oracle_PDBs
         else:
             Instances = Oracle_CDB
         for Instance in Instances:
+            print(Instance[0])
             text += Instance[0] + '\n\n'
             con = cx_Oracle.connect('system/elcaro@' + Instance[0])
             cur = con.cursor()
