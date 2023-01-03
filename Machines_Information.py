@@ -58,7 +58,7 @@ for cell in sheet.range('B2:B20'):
             domain_name = "" if domain_name is None else "." + domain_name
             print("domain_name - " + domain_name)
             Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
-            print("Oracle_CDB -" + str(Oracle_CDB))
+            print("Oracle_CDB - " + str(Oracle_CDB))
             Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
             print("Oracle_PDBs - " + str(Oracle_PDBs))
 
@@ -83,9 +83,10 @@ for cell in sheet.range('B2:B20'):
             sheet.update_acell('C' + str(rownum), text2.rstrip('\n\n'))
             sheet.update_acell('D' + str(rownum), text3.rstrip('\n\n'))
         except cx_Oracle.DatabaseError as e:
+            error_obj, = e.args
             sheet.update_acell('C' + str(rownum), "Oracle Database Not Installed")
             sheet.update_acell('D' + str(rownum), "Oracle Database Not Installed")
-            sheet.update_acell('E' + str(rownum), e)
+            sheet.update_acell('E' + str(rownum), error_obj.message)
             sheet.update_acell('F' + str(rownum), "Oracle Database Not Installed")
             sheet.update_acell('G' + str(rownum), "Oracle Database Not Installed")
 
