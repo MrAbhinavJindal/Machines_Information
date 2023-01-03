@@ -82,10 +82,10 @@ for cell in sheet.range('B2:B20'):
             sheet.update_acell('G' + str(rownum), text1.rstrip('\n\n'))
             sheet.update_acell('C' + str(rownum), text2.rstrip('\n\n'))
             sheet.update_acell('D' + str(rownum), text3.rstrip('\n\n'))
-        except cx_Oracle.DatabaseError:
+        except cx_Oracle.DatabaseError as e:
             sheet.update_acell('C' + str(rownum), "Oracle Database Not Installed")
             sheet.update_acell('D' + str(rownum), "Oracle Database Not Installed")
-            sheet.update_acell('E' + str(rownum), "Oracle Database Not Installed")
+            sheet.update_acell('E' + str(rownum), e)
             sheet.update_acell('F' + str(rownum), "Oracle Database Not Installed")
             sheet.update_acell('G' + str(rownum), "Oracle Database Not Installed")
 
