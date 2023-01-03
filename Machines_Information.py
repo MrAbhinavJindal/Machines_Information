@@ -119,9 +119,9 @@ for cell in sheet.range('B2:B20'):
 
         path = str(os.popen("sc qc Wildfly | find \"BINARY_PATH_NAME\"").read())
         if path == "":
-            text += "Wildfly Service Unavailable\n\n"
+            text += "Wildfly Service Unavailable"
         else:
-            text += "---Wildfly Service Path---\n" + path[path.find(": ") + len(": "):path.rfind('')] + "\n\n"
+            text += "---Wildfly Service Path---\n" + path[path.find(": ") + len(": "):path.rfind('')]
 
         sheet.update_acell('J' + str(rownum), text)
 
