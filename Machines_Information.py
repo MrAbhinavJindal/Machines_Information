@@ -30,6 +30,18 @@ for cell in sheet.range('B2:B20'):
     rownum += 1
     if cell.value.upper() == socket.gethostname().upper():
 
+        sheet.update_acell('C' + str(rownum), "")
+        sheet.update_acell('D' + str(rownum), "")
+        sheet.update_acell('E' + str(rownum), "")
+        sheet.update_acell('F' + str(rownum), "")
+        sheet.update_acell('G' + str(rownum), "")
+        sheet.update_acell('H' + str(rownum), "")
+        sheet.update_acell('I' + str(rownum), "")
+        sheet.update_acell('J' + str(rownum), "")
+        sheet.update_acell('K' + str(rownum), "")
+        sheet.update_acell('L' + str(rownum), "")
+
+
         # -----------Oracle Version ------------
         con = cx_Oracle.connect('system/elcaro')
         cur = con.cursor()
@@ -41,26 +53,26 @@ for cell in sheet.range('B2:B20'):
         text1 = ''
         text2 = ''
         text3 = ''
-        Oracle_Instance = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()[0][0]
+        Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
         Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
-        Oracle_PDBs.insert(0, ('' + Oracle_Instance + '',))
-        for Oracle_PDB in Oracle_PDBs:
-            text += Oracle_PDB[0] + '\n\n'
-            try:
-                con = cx_Oracle.connect('system/elcaro@' + Oracle_PDB[0])
-                cur = con.cursor()
-                result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips)").fetchall()[0][0]
-                result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips where sl_observed=1)").fetchall()[0][0]
-                text1 += "----" + Oracle_PDB[0] + "----\n\nScheduled Servicedays: " + result1 + "\n\nObserved Servicedays: " + result2 + "\n\n"
-                result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
-                text2 += "----" + Oracle_PDB[0] + "----\n\n" + result3[0] + "\n\n"
-                text3 += "----" + Oracle_PDB[0] + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
-            except:
-                pass
-        sheet.update_acell('F' + str(rownum), text)
-        sheet.update_acell('G' + str(rownum), text1)
-        sheet.update_acell('C' + str(rownum), text2)
-        sheet.update_acell('D' + str(rownum), text3)
+        if Oracle_PDBs:
+            Instances = Oracle_PDBs
+        else:
+            Instances = Oracle_CDB
+        for Instance in Instances:
+            text += Instance[0] + '\n\n'
+            con = cx_Oracle.connect('system/elcaro@' + Instance[0])
+            cur = con.cursor()
+            result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips)").fetchall()[0][0]
+            result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips where sl_observed=1)").fetchall()[0][0]
+            text1 += "----" + Instance[0] + "----\n\nScheduled Servicedays: " + result1 + "\n\nObserved Servicedays: " + result2 + "\n\n"
+            result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
+            text2 += "----" + Instance[0] + "----\n\n" + result3[0] + "\n\n"
+            text3 += "----" + Instance[0] + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
+        sheet.update_acell('F' + str(rownum), text.rstrip('\n\n'))
+        sheet.update_acell('G' + str(rownum), text1.rstrip('\n\n'))
+        sheet.update_acell('C' + str(rownum), text2.rstrip('\n\n'))
+        sheet.update_acell('D' + str(rownum), text3.rstrip('\n\n'))
 
 
         # -----------Microstrategy Version ------------
