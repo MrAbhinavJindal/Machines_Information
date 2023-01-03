@@ -64,7 +64,7 @@ for cell in sheet.range('B2:B20'):
             sheet.update_acell('D' + str(rownum), text3)
         except:
             pass
-
+ 
         # -----------Microstrategy Version ------------
         p = subprocess.Popen("mstrctl -s IntelligenceServer gs | find \"<version>\"", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         output, error = p.communicate()
