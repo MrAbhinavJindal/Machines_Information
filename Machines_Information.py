@@ -66,7 +66,7 @@ for cell in sheet.range('B2:B20'):
             Instances = Oracle_PDBs
         else:
             Instances = Oracle_CDB
-            
+
         for Instance in Instances:
             print(Instance[0] + domain_name)
             text += Instance[0] + domain_name + '\n\n'
@@ -132,10 +132,13 @@ for cell in sheet.range('B2:B20'):
         bitmask = windll.kernel32.GetLogicalDrives()
         for letter in string.ascii_uppercase:
             if bitmask & 1:
-                hdd = psutil.disk_usage(letter + ":")
-                text += "---" + letter + " Drive---\n" \
-                       "Total: " + str(int(hdd.total / (2 ** 30))) + " GB\n" \
-                       "Free: " + str(int(hdd.free / (2 ** 30))) + " GB\n\n"
+                try:
+                    hdd = psutil.disk_usage(letter + ":")
+                    text += "---" + letter + " Drive---\n" \
+                           "Total: " + str(int(hdd.total / (2 ** 30))) + " GB\n" \
+                           "Free: " + str(int(hdd.free / (2 ** 30))) + " GB\n\n"
+                except:
+                    pass
             bitmask >>= 1
         sheet.update_acell('L' + str(rownum), text.rstrip("\n\n"))
 
