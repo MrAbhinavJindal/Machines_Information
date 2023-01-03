@@ -29,42 +29,40 @@ rownum = 1
 for cell in sheet.range('B2:B20'):
     rownum += 1
     if cell.value.upper() == socket.gethostname().upper():
-        try:
-            con = cx_Oracle.connect('system/elcaro')
-            cur = con.cursor()
 
-            # -----------Oracle Version ------------
-            Oracle_Version = cur.execute("select * from v$version").fetchall()[0][0]
-            sheet.update_acell('E' + str(rownum), Oracle_Version)
+        # -----------Oracle Version ------------
+        con = cx_Oracle.connect('system/elcaro')
+        cur = con.cursor()
+        Oracle_Version = cur.execute("select * from v$version").fetchall()[0][0]
+        sheet.update_acell('E' + str(rownum), Oracle_Version)
 
-            # -----------Oracle Instance ------------
-            text = ''
-            text1 = ''
-            text2 = ''
-            text3 = ''
-            Oracle_Instance = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()[0][0]
-            Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
-            Oracle_PDBs.insert(0, ('' + Oracle_Instance + '',))
-            for Oracle_PDB in Oracle_PDBs:
-                text += Oracle_PDB[0] + '\n\n'
-                try:
-                    con = cx_Oracle.connect('system/elcaro@' + Oracle_PDB[0])
-                    cur = con.cursor()
-                    result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips)").fetchall()[0][0]
-                    result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips where sl_observed=1)").fetchall()[0][0]
-                    text1 += "----" + Oracle_PDB[0] + "----\n\nScheduled Servicedays: " + result1 + "\n\nObserved Servicedays: " + result2 + "\n\n"
-                    result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
-                    text2 += "----" + Oracle_PDB[0] + "----\n\n" + result3[0] + "\n\n"
-                    text3 += "----" + Oracle_PDB[0] + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
-                except:
-                    pass
-            sheet.update_acell('F' + str(rownum), text)
-            sheet.update_acell('G' + str(rownum), text1)
-            sheet.update_acell('C' + str(rownum), text2)
-            sheet.update_acell('D' + str(rownum), text3)
-        except:
-            pass
- 
+        # -----------Oracle Instance ------------
+        text = ''
+        text1 = ''
+        text2 = ''
+        text3 = ''
+        Oracle_Instance = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()[0][0]
+        Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
+        Oracle_PDBs.insert(0, ('' + Oracle_Instance + '',))
+        for Oracle_PDB in Oracle_PDBs:
+            text += Oracle_PDB[0] + '\n\n'
+            try:
+                con = cx_Oracle.connect('system/elcaro@' + Oracle_PDB[0])
+                cur = con.cursor()
+                result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips)").fetchall()[0][0]
+                result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips where sl_observed=1)").fetchall()[0][0]
+                text1 += "----" + Oracle_PDB[0] + "----\n\nScheduled Servicedays: " + result1 + "\n\nObserved Servicedays: " + result2 + "\n\n"
+                result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
+                text2 += "----" + Oracle_PDB[0] + "----\n\n" + result3[0] + "\n\n"
+                text3 += "----" + Oracle_PDB[0] + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
+            except:
+                pass
+        sheet.update_acell('F' + str(rownum), text)
+        sheet.update_acell('G' + str(rownum), text1)
+        sheet.update_acell('C' + str(rownum), text2)
+        sheet.update_acell('D' + str(rownum), text3)
+
+
         # -----------Microstrategy Version ------------
         p = subprocess.Popen("mstrctl -s IntelligenceServer gs | find \"<version>\"", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         output, error = p.communicate()
@@ -113,13 +111,10 @@ for cell in sheet.range('B2:B20'):
         bitmask = windll.kernel32.GetLogicalDrives()
         for letter in string.ascii_uppercase:
             if bitmask & 1:
-                try:
-                    hdd = psutil.disk_usage(letter + ":")
-                    text += "---" + letter + " Drive---\n" \
-                           "Total: " + str(int(hdd.total / (2 ** 30))) + " GB\n" \
-                           "Free: " + str(int(hdd.free / (2 ** 30))) + " GB\n\n"
-                except:
-                    pass
+                hdd = psutil.disk_usage(letter + ":")
+                text += "---" + letter + " Drive---\n" \
+                       "Total: " + str(int(hdd.total / (2 ** 30))) + " GB\n" \
+                       "Free: " + str(int(hdd.free / (2 ** 30))) + " GB\n\n"
             bitmask >>= 1
         sheet.update_acell('L' + str(rownum), text.rstrip("\n\n"))
 
