@@ -84,12 +84,7 @@ for cell in sheet.range('B2:B20'):
             sheet.update_acell('D' + str(rownum), text3.rstrip('\n\n'))
         except cx_Oracle.DatabaseError as e:
             error_obj, = e.args
-            sheet.update_acell('C' + str(rownum), "Oracle Database Not Installed")
-            sheet.update_acell('D' + str(rownum), "Oracle Database Not Installed")
             sheet.update_acell('E' + str(rownum), error_obj.message)
-            sheet.update_acell('F' + str(rownum), "Oracle Database Not Installed")
-            sheet.update_acell('G' + str(rownum), "Oracle Database Not Installed")
-
 
         # -----------Microstrategy Version ------------
         p = subprocess.Popen("mstrctl -s IntelligenceServer gs | find \"<version>\"", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
