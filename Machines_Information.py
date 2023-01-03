@@ -47,18 +47,21 @@ for cell in sheet.range('B2:B20'):
             Oracle_PDBs.insert(0, ('' + Oracle_Instance + '',))
             for Oracle_PDB in Oracle_PDBs:
                 text += Oracle_PDB[0] + '\n\n'
-                con = cx_Oracle.connect('system/elcaro@' + Oracle_PDB[0])
-                cur = con.cursor()
-                result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips)").fetchall()[0][0]
-                result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips where sl_observed=1)").fetchall()[0][0]
-                text1 += "----" + Oracle_PDB[0] + "----\n\nScheduled Servicedays: " + result1 + "\n\nObserved Servicedays: " + result2 + "\n\n"
-                result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
-                text2 += "----" + Oracle_PDB[0] + "----\n\n" + result3[0] + "\n\n"
-                text3 += "----" + Oracle_PDB[0] + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
-            sheet.update_acell('F' + str(rownum), text.rstrip("\n\n"))
-            sheet.update_acell('G' + str(rownum), text1.rstrip("\n\n"))
-            sheet.update_acell('C' + str(rownum), text2.rstrip("\n\n"))
-            sheet.update_acell('D' + str(rownum), text3.rstrip("\n\n"))
+                try:
+                    con = cx_Oracle.connect('system/elcaro@' + Oracle_PDB[0])
+                    cur = con.cursor()
+                    result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips)").fetchall()[0][0]
+                    result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips where sl_observed=1)").fetchall()[0][0]
+                    text1 += "----" + Oracle_PDB[0] + "----\n\nScheduled Servicedays: " + result1 + "\n\nObserved Servicedays: " + result2 + "\n\n"
+                    result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
+                    text2 += "----" + Oracle_PDB[0] + "----\n\n" + result3[0] + "\n\n"
+                    text3 += "----" + Oracle_PDB[0] + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
+                except:
+                    pass
+            sheet.update_acell('F' + str(rownum), text)
+            sheet.update_acell('G' + str(rownum), text1)
+            sheet.update_acell('C' + str(rownum), text2)
+            sheet.update_acell('D' + str(rownum), text3)
         except:
             pass
 
