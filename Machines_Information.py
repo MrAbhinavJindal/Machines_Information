@@ -55,7 +55,6 @@ for cell in sheet.range('B2:B20'):
             text3 = ''
 
             domain_name = cur.execute("select case when display_value is null then '' else display_value end from v$parameter where name ='db_domain'").fetchall()[0][0]
-            print("domain_name - " + domain_name)
             Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
             print("Oracle_CDB - " + str(Oracle_CDB))
             Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
