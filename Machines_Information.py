@@ -2,7 +2,7 @@
 
 import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess
 from oauth2client.service_account import ServiceAccountCredentials
-from ctypes import windll
+from ctypes import windll 
 
 client_secret = {
   "type": "service_account",
