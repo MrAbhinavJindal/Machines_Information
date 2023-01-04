@@ -2,7 +2,7 @@
 
 import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess
 from oauth2client.service_account import ServiceAccountCredentials
-from ctypes import windll 
+from ctypes import windll
 
 client_secret = {
   "type": "service_account",
@@ -66,7 +66,7 @@ for cell in sheet.range('B2:B20'):
                 Instances = Oracle_CDB
 
             for Instance in Instances:
-                Instance_Name = Instance[0] if domain_name is None else "." + domain_name
+                Instance_Name = Instance[0] if domain_name is None else Instance[0] + "." + domain_name
                 print(Instance_Name)
                 text += Instance_Name + '\n\n'
                 con = cx_Oracle.connect('system/elcaro@' + Instance_Name)
