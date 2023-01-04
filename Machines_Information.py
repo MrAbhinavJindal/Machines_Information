@@ -55,7 +55,6 @@ for cell in sheet.range('B2:B20'):
             text3 = ''
 
             domain_name = cur.execute("select case when display_value is null then '' else display_value end from v$parameter where name ='db_domain'").fetchall()[0][0]
-            domain_name = "" if domain_name is None else "." + domain_name
             print("domain_name - " + domain_name)
             Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
             print("Oracle_CDB - " + str(Oracle_CDB))
@@ -68,16 +67,17 @@ for cell in sheet.range('B2:B20'):
                 Instances = Oracle_CDB
 
             for Instance in Instances:
-                print(Instance[0] + domain_name)
-                text += Instance[0] + domain_name + '\n\n'
-                con = cx_Oracle.connect('system/elcaro@' + Instance[0] + domain_name)
+                Instance_Name = Instance[0] if domain_name is None else "." + domain_name
+                print(Instance_Name)
+                text += Instance_Name + '\n\n'
+                con = cx_Oracle.connect('system/elcaro@' + Instance_Name)
                 cur = con.cursor()
                 result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips)").fetchall()[0][0]
                 result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips where sl_observed=1)").fetchall()[0][0]
-                text1 += "----" + Instance[0] + domain_name + "----\n\nScheduled Servicedays: " + result1 + "\n\nObserved Servicedays: " + result2 + "\n\n"
+                text1 += "----" + Instance_Name + "----\n\nScheduled Servicedays: " + result1 + "\n\nObserved Servicedays: " + result2 + "\n\n"
                 result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
-                text2 += "----" + Instance[0] + domain_name + "----\n\n" + result3[0] + "\n\n"
-                text3 += "----" + Instance[0] + domain_name + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
+                text2 += "----" + Instance_Name + "----\n\n" + result3[0] + "\n\n"
+                text3 += "----" + Instance_Name + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
             sheet.update_acell('F' + str(rownum), text.rstrip('\n\n'))
             sheet.update_acell('G' + str(rownum), text1.rstrip('\n\n'))
             sheet.update_acell('C' + str(rownum), text2.rstrip('\n\n'))
