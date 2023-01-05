@@ -75,6 +75,8 @@ for cell in sheet.range('B2:B20'):
                 cur = con.cursor()
                 result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips)").fetchall()[0][0]
                 result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips where sl_observed=1)").fetchall()[0][0]
+                print(result1)
+                print(result2)
                 text1 += "----" + Instance_Name + "----\n\nScheduled Servicedays: " + result1 + "\n\nObserved Servicedays: " + result2 + "\n\n"
                 result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
                 text2 += "----" + Instance_Name + "----\n\n" + result3[0] + "\n\n"
