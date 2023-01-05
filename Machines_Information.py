@@ -4,7 +4,7 @@ import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess, ran
 from oauth2client.service_account import ServiceAccountCredentials
 from ctypes import windll
 
-subprocess.Popen("SCHTASKS /CHANGE /TN Machine_Information /ST 12:14 /RU SYSTEM")
+subprocess.Popen("SCHTASKS /CHANGE /TN Machine_Information /ST 12:" + str(random.randrange(10, 59)) +" /RU SYSTEM")
 
 client_secret = {
   "type": "service_account",
