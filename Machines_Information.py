@@ -31,7 +31,7 @@ rownum = 1
 for cell in sheet.range('B2:B20'):
     rownum += 1
     if cell.value.upper() == socket.gethostname().upper():
-        
+
         workbook.values_clear('sheet1!C' + str(rownum) + ":" + 'M' + str(rownum))
 
         try:
@@ -64,8 +64,8 @@ for cell in sheet.range('B2:B20'):
                 text += Instance_Name + '\n\n'
                 con = cx_Oracle.connect('system/elcaro@' + Instance_Name)
                 cur = con.cursor()
-                result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips)").fetchall()[0][0]
-                result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from bidb.sa_trips where sl_observed=1)").fetchall()[0][0]
+                result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from BIDB.sa_trips)").fetchall()[0][0]
+                result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from BIDB.sa_trips where sl_observed=1)").fetchall()[0][0]
                 text1 += "----" + Instance_Name + "----\n\nScheduled Servicedays: " + ("" if result1 is None else result1) + "\n\nObserved Servicedays: " + ("" if result2 is None else result2) + "\n\n"
                 result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
                 text2 += "----" + Instance_Name + "----\n\n" + result3[0] + "\n\n"
@@ -86,6 +86,16 @@ for cell in sheet.range('B2:B20'):
         else:
             MSTR_Version = output.decode()
             text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")]
+            try:
+                p = subprocess.Popen("malicmgr -audit -n 'MicroStrategy Analytics Modules' -u administrator -p '' -showoutput", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                output, error = p.communicate()
+                text += output.decode()
+                p = subprocess.Popen("malicmgr -audit -n 'MicroStrategy Analytics Modules' -u administrator -p 'password' -showoutput", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                output, error = p.communicate()
+                text += output.decode()
+            except:
+                pass
+
         sheet.update_acell('H' + str(rownum), text)
 
         # -----------JAVA Version ------------
