@@ -94,11 +94,8 @@ for cell in sheet.range('B2:B20'):
             if Result1.startswith("(Login failure)"):
                 p = subprocess.run('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 Result1 = p.stdout.splitlines()[1].decode()
-            if Result1.startswith("Error"):
-                text += Result1 + "\n"
-            if Result1.startswith("This is a notification that your MicroStrategy implementation may be out of compliance"):
-                text += "MicroStrategy out of compliance\n"
-    
+            text += Result1 + "\n"
+
             root = ET.parse('C:\Program Files (x86)\Common Files\MicroStrategy\\activate.xml').getroot()
             text += "License - " +root[1].text + "\nIssue Date - " + root[4].text
 
