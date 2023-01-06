@@ -92,7 +92,7 @@ for cell in sheet.range('B2:B20'):
             p = subprocess.run('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             Result1 = p.stdout.splitlines()[1].decode()
             if Result1.startswith("(Login failure)"):
-                p = subprocess.run('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                p = subprocess.run('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 Result1 = p.stdout.splitlines()[1].decode()
             text += Result1 + "\n"
 
