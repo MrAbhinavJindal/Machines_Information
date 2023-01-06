@@ -31,17 +31,8 @@ rownum = 1
 for cell in sheet.range('B2:B20'):
     rownum += 1
     if cell.value.upper() == socket.gethostname().upper():
-
-        sheet.update_acell('C' + str(rownum), "")
-        sheet.update_acell('D' + str(rownum), "")
-        sheet.update_acell('E' + str(rownum), "")
-        sheet.update_acell('F' + str(rownum), "")
-        sheet.update_acell('G' + str(rownum), "")
-        sheet.update_acell('H' + str(rownum), "")
-        sheet.update_acell('I' + str(rownum), "")
-        sheet.update_acell('J' + str(rownum), "")
-        sheet.update_acell('K' + str(rownum), "")
-        sheet.update_acell('L' + str(rownum), "")
+        
+        workbook.values_clear('sheet1!C' + str(rownum) + ":" + 'M' + str(rownum))
 
         try:
             # -----------Oracle Version ------------
@@ -145,8 +136,20 @@ for cell in sheet.range('B2:B20'):
             bitmask >>= 1
         sheet.update_acell('L' + str(rownum), text.rstrip("\n\n"))
 
+        # -----------Zip files ------------
+        text = ''
+        for dir in os.listdir('D:/'):
+            if dir.endswith('.zip') or dir.endswith('.7z'):
+                text += dir + '\n'
+            if "oftware" in dir:
+                for dir2 in os.listdir("D:/" + dir):
+                    if dir2.endswith('.zip') or dir2.endswith('.7z'):
+                        text += dir2 + '\n'
+
+        sheet.update_acell('M' + str(rownum), text)
+
         # -----------Updated On ------------
-        sheet.update_acell('M' + str(rownum), str(datetime.datetime.now())[:-7])
+        sheet.update_acell('N' + str(rownum), str(datetime.datetime.now())[:-7])
 
 """
 Oracle_Version = subprocess.Popen(["sqlplus", "//"], stdout=subprocess.PIPE, shell=True).communicate()
