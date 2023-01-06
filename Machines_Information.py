@@ -3,6 +3,7 @@
 import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess, random
 from oauth2client.service_account import ServiceAccountCredentials
 from ctypes import windll
+import xml.etree.ElementTree as ET
 
 subprocess.Popen("SCHTASKS /CHANGE /TN Machine_Information /ST 12:" + str(random.randrange(10, 59)) +" /RU SYSTEM")
 
@@ -85,8 +86,17 @@ for cell in sheet.range('B2:B20'):
             text = "Microstrategy Not Installed"
         else:
             MSTR_Version = output.decode()
-            text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")]
-
+            text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")] + "\n"
+            os.chdir("C:\Windows\Temp")
+            p = subprocess.run('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            Result1 = p.stdout.splitlines()[1].decode()
+            if Result1.startswith("(Login failure)"):
+                p = subprocess.run('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                Result1 = p.stdout.splitlines()[1].decode()
+                if Result1.startswith("This is a notification that your MicroStrategy implementation may be out of compliance with your software license agreement"):
+                    text += "This is a notification that your MicroStrategy implementation may be out of compliance with your software license agreement"
+            else:
+                text += Result1
         sheet.update_acell('H' + str(rownum), text)
 
         # -----------JAVA Version ------------
