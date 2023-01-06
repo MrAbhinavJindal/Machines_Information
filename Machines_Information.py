@@ -49,7 +49,7 @@ for cell in sheet.range('B2:B20'):
 
             domain_name = cur.execute("select case when display_value is null then '' else display_value end from v$parameter where name ='db_domain'").fetchall()[0][0]
             Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
-            print("Oracle_CDB- " + str(Oracle_CDB))
+            print("Oracle_CDB - " + str(Oracle_CDB))
             Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
             print("Oracle_PDBs - " + str(Oracle_PDBs))
 
@@ -86,14 +86,13 @@ for cell in sheet.range('B2:B20'):
         else:
             MSTR_Version = output.decode()
             text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")]
-
-            p = subprocess.Popen('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            output, error = p.communicate()
-            text += output.decode()
-            p = subprocess.Popen('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            output, error = p.communicate()
-            text += output.decode()
-
+            p = subprocess.run('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            Result1 = p.stdout.splitlines()[1].decode()
+            if Result1.startswith("(Login failure)"):
+                p = subprocess.run('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+                Result1 = p.stdout.splitlines()[1].decode()
+                if Result1.startswith("This is a notification that your MicroStrategy implementation may be out of compliance with your software license agreement"):
+                    text += "This is a notification that your MicroStrategy implementation may be out of compliance with your software license agreement"
 
         sheet.update_acell('H' + str(rownum), text)
 
