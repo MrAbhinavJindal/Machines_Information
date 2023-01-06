@@ -87,16 +87,21 @@ for cell in sheet.range('B2:B20'):
         else:
             MSTR_Version = output.decode()
             text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")] + "\n"
+
             os.chdir("C:\Windows\Temp")
             p = subprocess.run('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             Result1 = p.stdout.splitlines()[1].decode()
             if Result1.startswith("(Login failure)"):
                 p = subprocess.run('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 Result1 = p.stdout.splitlines()[1].decode()
-                if Result1.startswith("This is a notification that your MicroStrategy implementation may be out of compliance with your software license agreement"):
-                    text += "This is a notification that your MicroStrategy implementation may be out of compliance with your software license agreement"
-            else:
-                text += Result1
+            if Result1.startswith("Error"):
+                text += Result1 + "\n"
+            if Result1.startswith("This is a notification that your MicroStrategy implementation may be out of compliance"):
+                text += "MicroStrategy out of compliance\n"
+    
+            root = ET.parse('C:\Program Files (x86)\Common Files\MicroStrategy\\activate.xml').getroot()
+            text += "License - " +root[1].text + "\nIssue Date - " + root[4].text
+
         sheet.update_acell('H' + str(rownum), text)
 
         # -----------JAVA Version ------------
