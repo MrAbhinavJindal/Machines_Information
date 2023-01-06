@@ -87,10 +87,10 @@ for cell in sheet.range('B2:B20'):
             MSTR_Version = output.decode()
             text = MSTR_Version[MSTR_Version.find("<version>") + len("<version>"):MSTR_Version.rfind("</version>")]
 
-            p = subprocess.Popen("malicmgr -audit -n \"MicroStrategy Analytics Modules\" -u administrator -p \"\" -showoutput", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            p = subprocess.Popen('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             output, error = p.communicate()
             text += output.decode()
-            p = subprocess.Popen("malicmgr -audit -n \"MicroStrategy Analytics Modules\" -u administrator -p 'password' -showoutput", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            p = subprocess.Popen('malicmgr -audit -n "MicroStrategy Analytics Modules" -u administrator -p "password" -showoutput', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             output, error = p.communicate()
             text += output.decode()
 
