@@ -170,7 +170,7 @@ for cell in sheet.range('B2:B20'):
                     if dir2.endswith('.zip') or dir2.endswith('.7z'):
                         text += dir2 + '\n'
 
-        sheet.update_acell('M' + str(rownum), os.environ['USERPROFILE'])
+
 
         # -----------Updated On ------------
         sheet.update_acell('N' + str(rownum), str(datetime.datetime.now())[:-7])
