@@ -37,10 +37,9 @@ for cell in sheet.range('B2:B20'):
 
         text = ''
         services = [x for x in psutil.win_service_iter() if x.name().startswith('OracleService')]
-        if services == "":
+        if not services:
             sheet.update_acell('E' + str(rownum), "Oracle Service Unavailable")
         else:
-            print(services)
             for service in services:
                 text += service.name() + " - " + service.status() + "\n\n"
 
