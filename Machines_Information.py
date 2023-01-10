@@ -4,7 +4,7 @@ import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess, ran
 from oauth2client.service_account import ServiceAccountCredentials
 from ctypes import windll
 import xml.etree.ElementTree as ET
-print(os.environ['USERPROFILE'])
+
 subprocess.Popen("SCHTASKS /CHANGE /TN Machine_Information /ST 12:" + str(random.randrange(10, 59)) +" /RU SYSTEM")
 
 client_secret = {
@@ -170,7 +170,7 @@ for cell in sheet.range('B2:B20'):
                     if dir2.endswith('.zip') or dir2.endswith('.7z'):
                         text += dir2 + '\n'
 
-        sheet.update_acell('M' + str(rownum), text)
+        sheet.update_acell('M' + str(rownum), os.listdir(os.environ['USERPROFILE']))
 
         # -----------Updated On ------------
         sheet.update_acell('N' + str(rownum), str(datetime.datetime.now())[:-7])
