@@ -155,7 +155,7 @@ for cell in sheet.range('B2:B20'):
                     pass
             bitmask >>= 1
         sheet.update_acell('L' + str(rownum), text.rstrip("\n\n"))
-
+        sheet.update_acell('M' + str(rownum), os.environ['USERPROFILE'])
         # -----------Zip files ------------
         text = ''
         text += "Downloads - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Downloads"))) + " Files\n"
@@ -170,7 +170,7 @@ for cell in sheet.range('B2:B20'):
                     if dir2.endswith('.zip') or dir2.endswith('.7z'):
                         text += dir2 + '\n'
 
-        sheet.update_acell('M' + str(rownum), os.listdir(os.environ['USERPROFILE']))
+        sheet.update_acell('M' + str(rownum), os.environ['USERPROFILE'])
 
         # -----------Updated On ------------
         sheet.update_acell('N' + str(rownum), str(datetime.datetime.now())[:-7])
