@@ -35,49 +35,70 @@ for cell in sheet.range('B2:B20'):
 
         workbook.values_clear('sheet1!C' + str(rownum) + ":" + 'M' + str(rownum))
 
-        try:
-            # -----------Oracle Version ------------
-            con = cx_Oracle.connect('system/elcaro')
-            cur = con.cursor()
-            Oracle_Version = cur.execute("select * from v$version").fetchall()[0][0]
-            sheet.update_acell('E' + str(rownum), Oracle_Version)
+        # -----------Zip files ------------
+        text = ''
 
-            # -----------Oracle Instance ------------
-            text = ''
-            text1 = ''
-            text2 = ''
-            text3 = ''
+        for dir in os.listdir('D:/'):
+            if dir.endswith('.zip') or dir.endswith('.7z'):
+                text += dir + '\n'
+            if "oftware" in dir:
+                for dir2 in os.listdir("D:/" + dir):
+                    if dir2.endswith('.zip') or dir2.endswith('.7z'):
+                        text += dir2 + '\n'
 
-            domain_name = cur.execute("select case when display_value is null then '' else display_value end from v$parameter where name ='db_domain'").fetchall()[0][0]
-            Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
-            print("Oracle_CDB - " + str(Oracle_CDB))
-            Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
-            print("Oracle_PDBs - " + str(Oracle_PDBs))
 
-            if Oracle_PDBs:
-                Instances = Oracle_PDBs
-            else:
-                Instances = Oracle_CDB
 
-            for Instance in Instances:
-                Instance_Name = Instance[0] if domain_name is None else Instance[0] + "." + domain_name
-                print(Instance_Name)
-                text += Instance_Name + '\n\n'
-                con = cx_Oracle.connect('system/elcaro@' + Instance_Name)
+        text = ''
+        services = [x for x in psutil.win_service_iter() if x.name().startswith('OracleService')]
+        if services == "":
+            text = "Oracle Service Unavailable"
+        else:
+            for service in services:
+                text += service.name() + " - " + service.status() + "\n\n"
+
+            try:
+                # -----------Oracle Version ------------
+                con = cx_Oracle.connect('system/elcaro')
                 cur = con.cursor()
-                result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from BIDB.sa_trips)").fetchall()[0][0]
-                result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from BIDB.sa_trips where sl_observed=1)").fetchall()[0][0]
-                text1 += "----" + Instance_Name + "----\n\nScheduled Servicedays: " + ("" if result1 is None else result1) + "\n\nObserved Servicedays: " + ("" if result2 is None else result2) + "\n\n"
-                result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
-                text2 += "----" + Instance_Name + "----\n\n" + result3[0] + "\n\n"
-                text3 += "----" + Instance_Name + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
-            sheet.update_acell('F' + str(rownum), text.rstrip('\n\n'))
-            sheet.update_acell('G' + str(rownum), text1.rstrip('\n\n'))
-            sheet.update_acell('C' + str(rownum), text2.rstrip('\n\n'))
-            sheet.update_acell('D' + str(rownum), text3.rstrip('\n\n'))
-        except cx_Oracle.DatabaseError as e:
-            error_obj, = e.args
-            sheet.update_acell('E' + str(rownum), error_obj.message)
+                text += cur.execute("select * from v$version").fetchall()[0][0]
+                sheet.update_acell('E' + str(rownum), text)
+
+                # -----------Oracle Instance ------------
+                text = ''
+                text1 = ''
+                text2 = ''
+                text3 = ''
+
+                domain_name = cur.execute("select case when display_value is null then '' else display_value end from v$parameter where name ='db_domain'").fetchall()[0][0]
+                Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
+                print("Oracle_CDB - " + str(Oracle_CDB))
+                Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
+                print("Oracle_PDBs - " + str(Oracle_PDBs))
+
+                if Oracle_PDBs:
+                    Instances = Oracle_PDBs
+                else:
+                    Instances = Oracle_CDB
+
+                for Instance in Instances:
+                    Instance_Name = Instance[0] if domain_name is None else Instance[0] + "." + domain_name
+                    print(Instance_Name)
+                    text += Instance_Name + '\n\n'
+                    con = cx_Oracle.connect('system/elcaro@' + Instance_Name)
+                    cur = con.cursor()
+                    result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from BIDB.sa_trips)").fetchall()[0][0]
+                    result2 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from BIDB.sa_trips where sl_observed=1)").fetchall()[0][0]
+                    text1 += "----" + Instance_Name + "----\n\nScheduled Servicedays: " + ("" if result1 is None else result1) + "\n\nObserved Servicedays: " + ("" if result2 is None else result2) + "\n\n"
+                    result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
+                    text2 += "----" + Instance_Name + "----\n\n" + result3[0] + "\n\n"
+                    text3 += "----" + Instance_Name + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
+                sheet.update_acell('F' + str(rownum), text.rstrip('\n\n'))
+                sheet.update_acell('G' + str(rownum), text1.rstrip('\n\n'))
+                sheet.update_acell('C' + str(rownum), text2.rstrip('\n\n'))
+                sheet.update_acell('D' + str(rownum), text3.rstrip('\n\n'))
+            except cx_Oracle.DatabaseError as e:
+                error_obj, = e.args
+                sheet.update_acell('E' + str(rownum), error_obj.message)
 
         # -----------Microstrategy Version ------------
         p = subprocess.Popen("mstrctl -s IntelligenceServer gs | find \"<version>\"", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -151,6 +172,9 @@ for cell in sheet.range('B2:B20'):
 
         # -----------Zip files ------------
         text = ''
+        text += "Downloads - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Downloads"))) + " Files\n"
+        text += "Documents - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Documents"))) + " Files\n"
+        text += "Desktop - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Desktop"))) + " Files\n\n"
         for dir in os.listdir('D:/'):
             if dir.endswith('.zip') or dir.endswith('.7z'):
                 text += dir + '\n'
