@@ -35,19 +35,6 @@ for cell in sheet.range('B2:B20'):
 
         workbook.values_clear('sheet1!C' + str(rownum) + ":" + 'M' + str(rownum))
 
-        # -----------Zip files ------------
-        text = ''
-
-        for dir in os.listdir('D:/'):
-            if dir.endswith('.zip') or dir.endswith('.7z'):
-                text += dir + '\n'
-            if "oftware" in dir:
-                for dir2 in os.listdir("D:/" + dir):
-                    if dir2.endswith('.zip') or dir2.endswith('.7z'):
-                        text += dir2 + '\n'
-
-
-
         text = ''
         services = [x for x in psutil.win_service_iter() if x.name().startswith('OracleService')]
         if services == "":
@@ -68,7 +55,6 @@ for cell in sheet.range('B2:B20'):
                 text1 = ''
                 text2 = ''
                 text3 = ''
-
                 domain_name = cur.execute("select case when display_value is null then '' else display_value end from v$parameter where name ='db_domain'").fetchall()[0][0]
                 Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
                 print("Oracle_CDB - " + str(Oracle_CDB))
