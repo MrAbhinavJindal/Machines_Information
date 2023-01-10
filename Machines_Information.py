@@ -1,6 +1,6 @@
 #https://www.youtube.com/watch?v=hyUw-koO2DA
 
-import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess, random, pathlib
+import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess, random
 from oauth2client.service_account import ServiceAccountCredentials
 from ctypes import windll
 import xml.etree.ElementTree as ET
@@ -155,13 +155,10 @@ for cell in sheet.range('B2:B20'):
                     pass
             bitmask >>= 1
         sheet.update_acell('L' + str(rownum), text.rstrip("\n\n"))
-        sheet.update_acell('M' + str(rownum), str(pathlib.Path.home()))
+
         # -----------Zip files ------------
         text = ''
-        text += "Downloads - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Downloads"))) + " Files\n"
-        text += "Documents - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Documents"))) + " Files\n"
-        text += "Desktop - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Desktop"))) + " Files\n\n"
-        text += "---Zip files---"
+        text += "---Zip files---\n"
         for dir in os.listdir('D:/'):
             if dir.endswith('.zip') or dir.endswith('.7z'):
                 text += dir + '\n'
@@ -169,13 +166,16 @@ for cell in sheet.range('B2:B20'):
                 for dir2 in os.listdir("D:/" + dir):
                     if dir2.endswith('.zip') or dir2.endswith('.7z'):
                         text += dir2 + '\n'
-
-
+        sheet.update_acell('M' + str(rownum), text)
 
         # -----------Updated On ------------
         sheet.update_acell('N' + str(rownum), str(datetime.datetime.now())[:-7])
 
 """
+        text += "Downloads - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Downloads"))) + " Files\n"
+        text += "Documents - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Documents"))) + " Files\n"
+        text += "Desktop - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Desktop"))) + " Files\n\n"
+        
 Oracle_Version = subprocess.Popen(["sqlplus", "//"], stdout=subprocess.PIPE, shell=True).communicate()
 Oracle_Version = (str(Oracle_Version).split('Version '))[1].split(r'\r\n\r\nCopyright')[0]
 print("Oracle Version = " + Oracle_Version)
