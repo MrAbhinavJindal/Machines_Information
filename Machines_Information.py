@@ -1,6 +1,6 @@
 #https://www.youtube.com/watch?v=hyUw-koO2DA
 
-import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess, random
+import gspread, datetime, socket, string, psutil, os, cx_Oracle, subprocess, random, pathlib
 from oauth2client.service_account import ServiceAccountCredentials
 from ctypes import windll
 import xml.etree.ElementTree as ET
@@ -155,7 +155,7 @@ for cell in sheet.range('B2:B20'):
                     pass
             bitmask >>= 1
         sheet.update_acell('L' + str(rownum), text.rstrip("\n\n"))
-        sheet.update_acell('M' + str(rownum), os.environ['USERPROFILE'])
+        sheet.update_acell('M' + str(rownum), str(pathlib.Path.home()))
         # -----------Zip files ------------
         text = ''
         text += "Downloads - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Downloads"))) + " Files\n"
