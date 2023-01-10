@@ -38,7 +38,7 @@ for cell in sheet.range('B2:B20'):
         text = ''
         services = [x for x in psutil.win_service_iter() if x.name().startswith('OracleService')]
         if services == "":
-            text = "Oracle Service Unavailable "
+            text = "Oracle Service Unavailable"
         else:
             for service in services:
                 text += service.name() + " - " + service.status() + "\n\n"
@@ -161,6 +161,7 @@ for cell in sheet.range('B2:B20'):
         text += "Downloads - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Downloads"))) + " Files\n"
         text += "Documents - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Documents"))) + " Files\n"
         text += "Desktop - " + str(len(os.listdir(os.environ['USERPROFILE'] + "\Desktop"))) + " Files\n\n"
+        text += "---Zip files---"
         for dir in os.listdir('D:/'):
             if dir.endswith('.zip') or dir.endswith('.7z'):
                 text += dir + '\n'
