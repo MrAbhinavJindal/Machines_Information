@@ -51,11 +51,10 @@ for cell in sheet.range('B2:B20'):
                 sheet.update_acell('E' + str(rownum), text)
 
                 # -----------Oracle Instance ------------
-                text = ''
+                text0 = ''
                 text1 = ''
                 text2 = ''
                 text3 = ''
-                domain_name = cur.execute("select case when display_value is null then '' else display_value end from v$parameter where name ='db_domain'").fetchall()[0][0]
                 Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
                 print("Oracle_CDB - " + str(Oracle_CDB))
                 Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
@@ -67,9 +66,9 @@ for cell in sheet.range('B2:B20'):
                     Instances = Oracle_CDB
 
                 for Instance in Instances:
-                    Instance_Name = Instance[0] if domain_name is None else Instance[0] + "." + domain_name
+                    Instance_Name = Instance[0]
                     print(Instance_Name)
-                    text += Instance_Name + '\n\n'
+                    text0 += Instance_Name + '\n\n'
                     con = cx_Oracle.connect('system/elcaro@' + Instance_Name)
                     cur = con.cursor()
                     result1 = cur.execute("SELECT LISTAGG(serviceday, ', ') WITHIN GROUP (ORDER BY serviceday) FROM (select distinct serviceday from BIDB.sa_trips)").fetchall()[0][0]
@@ -78,13 +77,14 @@ for cell in sheet.range('B2:B20'):
                     result3 = cur.execute("SELECT Customer, Branch, Patch_Date FROM BIDB.BI_Version").fetchall()[0]
                     text2 += "----" + Instance_Name + "----\n\n" + result3[0] + "\n\n"
                     text3 += "----" + Instance_Name + "----\n\nBranch - " + result3[1] + "\nPatch Date - " + result3[2] + "\n\n"
-                sheet.update_acell('F' + str(rownum), text.rstrip('\n\n'))
+                sheet.update_acell('F' + str(rownum), text0.rstrip('\n\n'))
                 sheet.update_acell('G' + str(rownum), text1.rstrip('\n\n'))
                 sheet.update_acell('C' + str(rownum), text2.rstrip('\n\n'))
                 sheet.update_acell('D' + str(rownum), text3.rstrip('\n\n'))
             except cx_Oracle.DatabaseError as e:
                 error_obj, = e.args
-                sheet.update_acell('E' + str(rownum), error_obj.message)
+                text += error_obj.message
+                sheet.update_acell('E' + str(rownum), text)
 
         # -----------Microstrategy Version ------------
         p = subprocess.Popen("mstrctl -s IntelligenceServer gs | find \"<version>\"", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -189,4 +189,6 @@ for child in MSTR_Version:
 # print(sheet.cell(1, 1).value)
 # print(sheet.row_values(2))
 # sheet.update_acell('A2','zxczxc')
+                domain_name = cur.execute("select case when display_value is null then '' else display_value end from v$parameter where name ='db_domain'").fetchall()[0][0]
+ if domain_name is None else Instance[0] + "." + domain_name
 """
