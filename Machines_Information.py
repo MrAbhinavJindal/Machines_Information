@@ -45,8 +45,10 @@ for cell in sheet.range('B2:B20'):
 
             try:
                 # -----------Oracle Version ------------
-                con = cx_Oracle.connect("/", mode = cx_Oracle.SYSDBA)
+                print(1)
+                con = cx_Oracle.connect("/", mode=cx_Oracle.SYSDBA)
                 cur = con.cursor()
+                print(2)
                 text += cur.execute("select * from v$version").fetchall()[0][0]
                 sheet.update_acell('E' + str(rownum), text)
 
