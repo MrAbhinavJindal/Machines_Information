@@ -45,7 +45,7 @@ for cell in sheet.range('B2:B20'):
 
             try:
                 # -----------Oracle Version ------------
-                con = cx_Oracle.connect("/", mode=cx_Oracle.SYSDBA)
+                con = cx_Oracle.connect("system/elcaro")
                 cur = con.cursor()
                 text += cur.execute("select * from v$version").fetchall()[0][0]
                 sheet.update_acell('E' + str(rownum), text)
@@ -55,7 +55,7 @@ for cell in sheet.range('B2:B20'):
                 text1 = ''
                 text2 = ''
                 text3 = ''
-                Oracle_CDB = cur.execute("select sys_context('userenv','db_name') from dual").fetchall()
+                Oracle_CDB = cur.execute("select * from global_name").fetchall()
                 print("Oracle_CDB - " + str(Oracle_CDB))
                 Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
                 print("Oracle_PDBs - " + str(Oracle_PDBs))
@@ -191,4 +191,6 @@ for child in MSTR_Version:
 # sheet.update_acell('A2','zxczxc')
                 domain_name = cur.execute("select case when display_value is null then '' else display_value end from v$parameter where name ='db_domain'").fetchall()[0][0]
  if domain_name is None else Instance[0] + "." + domain_name
+ select sys_context('userenv','db_name') from dual
+ "/", mode=cx_Oracle.SYSDBA
 """
