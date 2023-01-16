@@ -55,7 +55,8 @@ for cell in sheet.range('B2:B20'):
                 text1 = ''
                 text2 = ''
                 text3 = ''
-                Oracle_CDB = cur.execute("select * from global_name").fetchall()
+                domain_name = cur.execute("select case when display_value is null then '' else display_value end from v$parameter where name ='db_domain'").fetchall()[0][0]
+                Oracle_CDB = cur.execute("SELECT sys_context('userenv','instance_name') FROM dual").fetchall()
                 print("Oracle_CDB - " + str(Oracle_CDB))
                 Oracle_PDBs = cur.execute("select PDB_NAME from DBA_PDBS where PDB_NAME !='PDB$SEED'").fetchall()
                 print("Oracle_PDBs - " + str(Oracle_PDBs))
@@ -66,7 +67,7 @@ for cell in sheet.range('B2:B20'):
                     Instances = Oracle_CDB
 
                 for Instance in Instances:
-                    Instance_Name = Instance[0]
+                    Instance_Name = Instance[0] if domain_name is None else Instance[0] + "." + domain_name
                     print(Instance_Name)
                     text0 += Instance_Name + '\n\n'
                     con = cx_Oracle.connect('system/elcaro@' + Instance_Name)
